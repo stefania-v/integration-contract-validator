@@ -1,3 +1,4 @@
+# Imports: JSON parsing, Streamlit UI, and JSON Schema validator
 import json
 import streamlit as st
 from jsonschema import Draft202012Validator
@@ -6,7 +7,7 @@ from jsonschema import Draft202012Validator
 st.set_page_config(page_title="Integration Contract Validator", page_icon="✅", layout="wide")
 
 st.title("Integration Contract Validator")
-st.caption("Validate a JSON payload against a JSON Schema (MVP).")
+st.caption("Validate a JSON payload against a JSON Schema.")
 
 col1, col2 = st.columns(2)
 
@@ -57,51 +58,54 @@ def _format_issue(err) -> dict:
     }
 
 if validate:
-    report = {
-        "pass": False,
-        "issue_count": 0,
-        "issues": [],
-    }
+    with col2:
+        report = {
+            "pass": False,
+            "issue_count": 0,
+            "issues": [],
+        }
 
-    try:
-        schema = _safe_json_load(schema_text)
-    except Exception as e:
-        st.error(f"Schema is not valid JSON: {e}")
-        st.stop()
+        try:
+            schema = _safe_json_load(schema_text)
+        except Exception as e:
+            st.error(f"Schema is not valid JSON: {e}")
+            st.stop()
 
-    try:
-        payload = _safe_json_load(payload_text)
-    except Exception as e:
-        st.error(f"Payload is not valid JSON: {e}")
-        st.stop()
+        try:
+            payload = _safe_json_load(payload_text)
+        except Exception as e:
+            st.error(f"Payload is not valid JSON: {e}")
+            st.stop()
 
-    try:
-        validator = _build_validator(schema, strict_mode)
-        issues = sorted(validator.iter_errors(payload), key=lambda e: list(e.path))
-        report["issues"] = [_format_issue(i) for i in issues]
-        report["issue_count"] = len(report["issues"])
-        report["pass"] = report["issue_count"] == 0
-    except Exception as e:
-        st.error(f"Validation error: {e}")
-        st.stop()
+        try:
+            validator = _build_validator(schema, strict_mode)
+            issues = sorted(validator.iter_errors(payload), key=lambda e: list(e.path))
+            report["issues"] = [_format_issue(i) for i in issues]
+            report["issue_count"] = len(report["issues"])
+            report["pass"] = report["issue_count"] == 0
+        except Exception as e:
+            st.error(f"Validation error: {e}")
+            st.stop()
 
-    if report["pass"]:
-        st.success("✅ PASS — payload matches the schema")
-    else:
-        st.error(f"❌ FAIL — {report['issue_count']} issue(s) found")
+        if report["pass"]:
+            st.success("✅ PASS — payload matches the schema")
+        else:
+            st.error(f"❌ FAIL — {report['issue_count']} issue(s) found")
 
-    st.write("### Issues")
-    if report["issues"]:
-        st.dataframe(report["issues"], use_container_width=True)
-    else:
-        st.info("No issues found.")
+        st.write("### Issues")
+        if report["issues"]:
+            st.dataframe(report["issues"], use_container_width=True)
+        else:
+            st.info("No issues found.")
 
-    st.write("### Export")
-    st.download_button(
-        "Download report (JSON)",
-        data=json.dumps(report, indent=2),
-        file_name="validation_report.json",
-        mime="application/json",
-    )
+        st.write("### Export")
+        st.download_button(
+            "Download report (JSON)",
+            data=json.dumps(report, indent=2),
+            file_name="validation_report.json",
+            mime="application/json",
+        )
 else:
-    result_box.info("Paste a schema and a payload, then click **Validate**.")
+    with col2:
+        st.info("Paste a schema and a payload, then click **Validate**.")
+
