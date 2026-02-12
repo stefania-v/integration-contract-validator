@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["bookingId", "customer", "containers"],
+  "properties": {
+    "bookingId": { "type": "string" },
+    "customer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "email"],
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" }
+      }
+    },
+    "containers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["containerNo", "weightKg"],
+        "properties": {
+          "containerNo": { "type": "string" },
+          "weightKg": { "type": "number", "minimum": 0 }
+        }
+      }
+    }
+  }
+}
