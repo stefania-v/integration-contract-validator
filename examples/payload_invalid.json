@@ -1,0 +1,8 @@
+{
+  "bookingId": 12345,
+  "customer": { "name": "ACME GmbH", "email": "not-an-email", "extra": "x" },
+  "containers": [
+    { "containerNo": "MSCU1234567", "weightKg": -5 }
+  ],
+  "unexpectedField": true
+}
