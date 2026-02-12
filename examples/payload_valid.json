@@ -1,0 +1,7 @@
+{
+  "bookingId": "BKG-12345",
+  "customer": { "name": "ACME GmbH", "email": "ops@acme.com" },
+  "containers": [
+    { "containerNo": "MSCU1234567", "weightKg": 12000.5 }
+  ]
+}
