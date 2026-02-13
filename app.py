@@ -17,20 +17,24 @@ col1, col2 = st.columns(2)
 with col1:
     st.subheader("Inputs")
 
+    # Strict mode toggle: regulates if additional properties in the JSON must lead to an error or not
     strict_mode = st.toggle("Strict mode (fail on additional properties)", value=True)
 
+    # Text area where it's possible to input the JSON schema
     schema_text = st.text_area(
         "JSON Schema",
         height=280,
         placeholder='Paste a JSON Schema here (draft 2020-12 compatible).'
     )
 
+    # Text area where it's possible to place a payload that needs to be checked if compliant with the JSON schema or not
     payload_text = st.text_area(
         "JSON Payload",
         height=280,
         placeholder='Paste a JSON payload here.'
     )
 
+    # Button that launches the validation process and returns the outputs
     validate = st.button("Validate", type="primary")
 
 with col2:
