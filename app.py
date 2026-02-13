@@ -41,7 +41,7 @@ def _safe_json_load(text: str):
     return json.loads(text)
 
 def _build_validator(schema: dict, strict: bool) -> Draft202012Validator:
-    # If strict mode, ensure additionalProperties is false unless explicitly set
+    # If it's running in strict mode, ensure additionalProperties is false unless explicitly set
     if strict:
         schema = dict(schema)  # shallow copy
         schema_type = schema.get("type")
