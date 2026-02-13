@@ -3,12 +3,15 @@ import json
 import streamlit as st
 from jsonschema import Draft202012Validator
 
-
+# Title and page icon setup
 st.set_page_config(page_title="Integration Contract Validator", page_icon="✅", layout="wide")
 
 st.title("Integration Contract Validator")
 st.caption("Validate a JSON payload against a JSON Schema.")
 
+# Divides the screen into two columns: 
+# - inputs of JSON schema and payload to be validated
+# - outputs of the JSON validation with ok/ko, technical errors and AI enhanced user friendly errors explanations
 col1, col2 = st.columns(2)
 
 with col1:
