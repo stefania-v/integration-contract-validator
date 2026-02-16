@@ -14,7 +14,7 @@ AI_OUTPUT_SCHEMA = {
             "items": {
                 "type": "object",
                 "additionalProperties": False,
-                "required": ["path", "explanation", "severity", "business_impact", "target", "suggestion"],
+                "required": ["target", "severity", "explanation", "suggestion"],
                 "properties": {
                     "target": {"type": "string"},
                     "severity": {"type": "string", "enum": ["low", "medium", "high"]},
