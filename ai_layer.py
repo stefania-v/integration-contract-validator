@@ -5,7 +5,7 @@ from openai import OpenAI
 AI_OUTPUT_SCHEMA = {
     "type": "object",
     "additionalProperties": False,
-    "required": ["summary", "top_issues", "risk_notes"],
+    "required": ["summary", "top_issues"],
     "properties": {
         "summary": {"type": "string"},
         "top_issues": {
