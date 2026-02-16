@@ -14,12 +14,11 @@ While JSON Schema validation tools provide precise technical errors, those messa
 
 - Business analysts  
 - QA teams  
-- Integration partners  
+- Integration partners and final users 
 - Non-technical stakeholders  
 
 This creates friction, slows down issue resolution, and increases back-and-forth between teams.
 
-There is a gap between low-level schema validation and actionable delivery insights.
 
 ---
 
@@ -28,7 +27,7 @@ There is a gap between low-level schema validation and actionable delivery insig
 This project implements an AI-enabled quality gate that:
 
 - Validates JSON payloads against a JSON Schema (Draft 2020-12)
-- Supports strict and lenient validation modes
+- Supports strict and loose validation modes
 - Produces structured validation reports
 - Translates technical validation errors into structured, actionable fix suggestions using an LLM
 - Enforces AI output guardrails via JSON Schema validation
@@ -134,8 +133,7 @@ This quality gate:
 - Detects integration issues earlier in the lifecycle  
 - Reduces friction between technical and non-technical stakeholders  
 - Bridges schema-level validation and delivery decisions  
-- Makes integration validation outputs accessible  
-- Supports QA, developers, and business analysts alike  
+- Makes integration validation outputs accessible
 
 It reflects a delivery-oriented mindset: not only validating contracts, but improving clarity and collaboration.
 
@@ -174,19 +172,6 @@ streamlit run app.py
 ```
 
 Then open the local URL shown in your terminal.
-
----
-
-## Roadmap
-
-Planned evolutions:
-
-- OpenAPI contract parsing  
-- CI/CD integration mode  
-- Batch validation mode  
-- Metrics dashboard for integration quality  
-- Agent-based orchestration for contract validation  
-- Automated test-case generation from schema  
 
 ---
 
