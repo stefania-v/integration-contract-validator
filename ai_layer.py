@@ -55,10 +55,27 @@ def build_ai_prompt(report: dict) -> str:
     return (
         "You are an assistant helping a developer understand JSON Schema validation errors.\n"
         "Given the validation issues, produce a concise explanation and practical fixes.\n\n"
+        "IMPORTANT OUTPUT FORMAT (MUST FOLLOW EXACTLY):\n"
+        "Return ONLY valid JSON with these top-level keys:\n"
+        "- summary (string)\n"
+        "- top_issues (array of objects: path, explanation, severity, business_impact)\n"
+        "- suggested_fixes (array of objects: target, suggestion)\n"
+        "- risk_notes (array of strings)\n"
+        "Do not include any other keys.\n\n"
+        "Example output:\n"
+        "{\n"
+        '  "summary": "Short summary... ",\n'
+        '  "top_issues": [\n'
+        '    {"path":"customer.email","explanation":"...","severity":"high","business_impact":"..."}\n'
+        "  ],\n"
+        '  "suggested_fixes": [\n'
+        '    {"target":"payload:/customer/email","suggestion":"Provide a valid email address."}\n'
+        "  ],\n"
+        '  "risk_notes": ["..."]\n'
+        "}\n\n"
         "Rules:\n"
         "- Output MUST be valid JSON.\n"
-        "- Do not invent fields that are not in the issues.\n"
-        "- Be concrete and actionable.\n"
+        "- Do not invent fields that are not supported by the issues.\n"
         "- Keep the summary short.\n\n"
         f"VALIDATION_ISSUES:\n{json.dumps(trimmed, indent=2)}\n"
     )
@@ -84,4 +101,18 @@ def call_openai_for_explanation(api_key: str, report: dict, model: str = "gpt-4o
 
     content = resp.choices[0].message.content or ""
     # Try to parse JSON output
-    return json.loads(content)
+    data = json.loads(content)
+
+    # Fallback mapping for common alternative outputs
+    if "summary" not in data and "explanation" in data:
+        data = {
+            "summary": data.get("explanation", "")[:240],
+            "top_issues": [],
+            "suggested_fixes": [
+                {"target": f"payload:/{f.get('field','')}", "suggestion": f.get("action","")}
+                for f in data.get("fixes", [])
+            ],
+            "risk_notes": []
+        }
+    
+    return data
