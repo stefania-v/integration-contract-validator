@@ -77,6 +77,8 @@ def build_ai_prompt(report: dict) -> str:
         "- Output MUST be valid JSON.\n"
         "- Do not invent fields that are not supported by the issues.\n"
         "- Keep the summary short.\n\n"
+        "Guidelines:\n"
+        "- When available, explicitly include invalid_value and expected in the explanation.\n"
         f"VALIDATION_ISSUES:\n{json.dumps(trimmed, indent=2)}\n"
     )
 
