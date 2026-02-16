@@ -5,7 +5,7 @@ from openai import OpenAI
 AI_OUTPUT_SCHEMA = {
     "type": "object",
     "additionalProperties": False,
-    "required": ["summary", "top_issues", "suggested_fixes", "risk_notes"],
+    "required": ["summary", "top_issues", "risk_notes"],
     "properties": {
         "summary": {"type": "string"},
         "top_issues": {
@@ -14,30 +14,14 @@ AI_OUTPUT_SCHEMA = {
             "items": {
                 "type": "object",
                 "additionalProperties": False,
-                "required": ["path", "explanation", "severity", "business_impact"],
+                "required": ["path", "explanation", "severity", "business_impact", "target", "suggestion"],
                 "properties": {
-                    "path": {"type": "string"},
-                    "explanation": {"type": "string"},
+                    "target": {"type": "string"},
                     "severity": {"type": "string", "enum": ["low", "medium", "high"]},
-                    "business_impact": {"type": "string"}
-                }
-            }
-        },
-        "suggested_fixes": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "additionalProperties": False,
-                "required": ["target", "suggestion"],
-                "properties": {
-                    "target": {"type": "string"},   # e.g. payload:/customer/email or schema:/properties/...
+                    "explanation": {"type": "string"},
                     "suggestion": {"type": "string"}
                 }
             }
-        },
-        "risk_notes": {
-            "type": "array",
-            "items": {"type": "string"}
         }
     }
 }
