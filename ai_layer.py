@@ -42,20 +42,31 @@ def build_ai_prompt(report: dict) -> str:
         "IMPORTANT OUTPUT FORMAT (MUST FOLLOW EXACTLY):\n"
         "Return ONLY valid JSON with these top-level keys:\n"
         "- summary (string)\n"
-        "- top_issues (array of objects: path, explanation, severity, business_impact)\n"
-        "- suggested_fixes (array of objects: target, suggestion)\n"
-        "- risk_notes (array of strings)\n"
-        "Do not include any other keys.\n\n"
+        "- top_issues (array)\n"
+        "Each item in top_issues MUST include exactly these keys:\n"
+        "- target (string, e.g. payload:/containers/0/weightKg)\n"
+        "- severity (low|medium|high)\n"
+        "- explanation (string)\n"
+        "- suggestion (string)\n\n"
+        "Do not output a separate suggested_fixes list.\n"
+        "Do not include any other keys.\n"
         "Example output:\n"
         "{\n"
-        '  "summary": "Short summary... ",\n'
+        '  "summary": "Multiple validation errors were detected in the payload.",\n'
         '  "top_issues": [\n'
-        '    {"path":"customer.email","explanation":"...","severity":"high","business_impact":"..."}\n'
-        "  ],\n"
-        '  "suggested_fixes": [\n'
-        '    {"target":"payload:/customer/email","suggestion":"Provide a valid email address."}\n'
-        "  ],\n"
-        '  "risk_notes": ["..."]\n'
+        '    {\n'
+        '      "target": "payload:/containers/0/weightKg",\n'
+        '      "severity": "high",\n'
+        '      "explanation": "The field containers[0].weightKg must be >= 0 (minimum 0), but -5 was provided.",\n'
+        '      "suggestion": "Set weightKg to a non-negative value (e.g. 0 or greater)."\n'
+        '    },\n'
+        '    {\n'
+        '      "target": "payload:/bookingId",\n'
+        '      "severity": "medium",\n'
+        '      "explanation": "The field bookingId must be a string, but 12345 was provided as a number.",\n'
+        '      "suggestion": "Convert bookingId to a string value, e.g. \"12345\"."\n'
+        '    }\n'
+        '  ]\n'
         "}\n\n"
         "Rules:\n"
         "- Output MUST be valid JSON.\n"
@@ -78,7 +89,7 @@ def call_openai_for_explanation(api_key: str, report: dict, model: str = "gpt-4o
     resp = client.chat.completions.create(
         model=model,
         messages=[
-            {"role": "system", "content": "Return ONLY valid JSON. No markdown."},
+            {"role": "system", "content": "Return ONLY valid JSON matching the required keys. No extra keys. No markdown."},
             {"role": "user", "content": prompt},
         ],
         temperature=0.2,
