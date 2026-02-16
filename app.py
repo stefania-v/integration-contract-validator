@@ -25,6 +25,7 @@ with col1:
     # Toggle to enable AI assistant - it is implemented using BYOK strategy (bring your own key)
     # So, to test the AI integration live, it is necessary to provide an OpenAI API key, to contain the website owner costs
     enable_ai = st.toggle("Enable AI explanation & fix suggestions (BYOK)", value=False)
+    st.caption("BYOK: the key is used only for this session and is not stored.")
     
     # Fields to provide the API Key and choose the AI model to be used for the purpose
     api_key = st.text_input("OpenAI API Key", type="password", placeholder="sk-...")
