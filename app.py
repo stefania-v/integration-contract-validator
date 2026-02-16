@@ -123,25 +123,25 @@ if validate:
             mime="application/json",
         )
 
-    st.write("### AI explanation (just if AI mode is enabled)")
-    if enable_ai:
-        if not api_key:
-            st.info("AI is enabled, but no API key was provided. Enter your own key to run AI assist.")
+        st.write("### AI explanation (just if AI mode is enabled)")
+        if enable_ai:
+            if not api_key:
+                st.info("AI is enabled, but no API key was provided. Enter your own key to run AI assist.")
+            else:
+                with st.spinner("Calling OpenAI..."):
+                    try:
+                        ai_out = call_openai_for_explanation(api_key=api_key, report=report, model=ai_model)
+
+                        # Validate AI output against our schema (guardrail)
+                        Draft202012Validator(AI_OUTPUT_SCHEMA).validate(ai_out)
+
+                        st.success("AI explanation generated.")
+                        st.json(ai_out)
+
+                    except Exception as e:
+                        st.error(f"AI assist failed: {e}")
         else:
-            with st.spinner("Calling OpenAI..."):
-                try:
-                    ai_out = call_openai_for_explanation(api_key=api_key, report=report, model=ai_model)
-
-                    # Validate AI output against our schema (guardrail)
-                    Draft202012Validator(AI_OUTPUT_SCHEMA).validate(ai_out)
-
-                    st.success("AI explanation generated.")
-                    st.json(ai_out)
-
-                except Exception as e:
-                    st.error(f"AI assist failed: {e}")
-    else:
-        st.caption("Enable AI assist to get explanations and fix suggestions (BYOK).")
+            st.caption("Enable AI assist to get explanations and fix suggestions (BYOK).")
 else:
     with col2:
         st.info("Paste a schema and a payload, then click **Validate**.")
