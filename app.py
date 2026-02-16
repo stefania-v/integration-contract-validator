@@ -2,6 +2,8 @@
 import json
 import streamlit as st
 from jsonschema import Draft202012Validator
+# Imports: from internal source import the functions to call the OpenAI API and obtain human readable outputs
+from ai_layer import call_openai_for_explanation, AI_OUTPUT_SCHEMA
 
 # Title and page icon setup
 st.set_page_config(page_title="Integration Contract Validator", page_icon="✅", layout="wide")
@@ -36,6 +38,15 @@ with col1:
 
     # Button that launches the validation process and returns the outputs
     validate = st.button("Validate", type="primary")
+
+    # Toggle to enable AI assistant - it is implemented using BYOK strategy (bring your own key)
+    # So, to test the AI integration live, it is necessary to provide an OpenAI API key, to contain the website owner costs
+    st.divider()
+    st.subheader("AI assist (optional)")
+
+    enable_ai = st.toggle("Enable AI explanation & fix suggestions (BYOK)", value=False)
+    api_key = st.text_input("OpenAI API Key", type="password", placeholder="sk-...")
+    ai_model = st.selectbox("Model", options=["gpt-4o-mini", "gpt-4o"], index=0)
 
 with col2:
     st.subheader("Output")
@@ -112,6 +123,26 @@ if validate:
             file_name="validation_report.json",
             mime="application/json",
         )
+
+    st.write("### AI explanation (just if AI mode is enabled)")
+    if enable_ai:
+        if not api_key:
+            st.info("AI is enabled, but no API key was provided. Enter your own key to run AI assist.")
+        else:
+            with st.spinner("Calling OpenAI..."):
+                try:
+                    ai_out = call_openai_for_explanation(api_key=api_key, report=report, model=ai_model)
+
+                    # Validate AI output against our schema (guardrail)
+                    Draft202012Validator(AI_OUTPUT_SCHEMA).validate(ai_out)
+
+                    st.success("AI explanation generated.")
+                    st.json(ai_out)
+
+                except Exception as e:
+                    st.error(f"AI assist failed: {e}")
+    else:
+        st.caption("Enable AI assist to get explanations and fix suggestions (BYOK).")
 else:
     with col2:
         st.info("Paste a schema and a payload, then click **Validate**.")
