@@ -66,12 +66,20 @@ def _build_validator(schema: dict, strict: bool) -> Draft202012Validator:
 def _format_issue(err) -> dict:
     path = ".".join([str(p) for p in err.path]) if err.path else ""
     schema_path = "/".join([str(p) for p in err.schema_path]) if err.schema_path else ""
+
+    # Value found in the payload at the failing path (e.g. -5)
+    invalid_value = err.instance
+
+    # What the validator expected (e.g. minimum=0, type="string", enum=[...])
+    expected = err.validator_value
+
     return {
         "message": err.message,
         "path": path,
         "schema_path": schema_path,
         "validator": err.validator,
-        "validator_value": str(err.validator_value),
+        "expected": expected,
+        "invalid_value": invalid_value,
     }
 
 if validate:
