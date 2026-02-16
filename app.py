@@ -22,6 +22,14 @@ with col1:
     # Strict mode toggle: regulates if additional properties in the JSON must lead to an error or not
     strict_mode = st.toggle("Strict mode (fail on additional properties)", value=True)
 
+    # Toggle to enable AI assistant - it is implemented using BYOK strategy (bring your own key)
+    # So, to test the AI integration live, it is necessary to provide an OpenAI API key, to contain the website owner costs
+    enable_ai = st.toggle("Enable AI explanation & fix suggestions (BYOK)", value=False)
+    
+    # Fields to provide the API Key and choose the AI model to be used for the purpose
+    api_key = st.text_input("OpenAI API Key", type="password", placeholder="sk-...")
+    ai_model = st.selectbox("Model", options=["gpt-4o-mini", "gpt-4o"], index=0)
+    
     # Text area where it's possible to input the JSON schema
     schema_text = st.text_area(
         "JSON Schema",
@@ -38,15 +46,6 @@ with col1:
 
     # Button that launches the validation process and returns the outputs
     validate = st.button("Validate", type="primary")
-
-    # Toggle to enable AI assistant - it is implemented using BYOK strategy (bring your own key)
-    # So, to test the AI integration live, it is necessary to provide an OpenAI API key, to contain the website owner costs
-    st.divider()
-    st.subheader("AI assist (optional)")
-
-    enable_ai = st.toggle("Enable AI explanation & fix suggestions (BYOK)", value=False)
-    api_key = st.text_input("OpenAI API Key", type="password", placeholder="sk-...")
-    ai_model = st.selectbox("Model", options=["gpt-4o-mini", "gpt-4o"], index=0)
 
 with col2:
     st.subheader("Output")
